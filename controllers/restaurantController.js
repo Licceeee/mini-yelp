@@ -1,16 +1,19 @@
 const db = require('../db/client')
 
-// TODO ADD VALIDATION (min max) middleware for rating (1-5)
 
 // ========================================>> GET:ALL:RESTAURANTS
 exports.list_all_restaurants = async (req, res) => {
 
   // TODO display city_id as city name
   const selectRestaurants = `
-    SELECT *
-    FROM restaurants
-    JOIN cities
-    ON restaurants.city_id=cities.id
+    SELECT r.id, r.name, c.name as city, r.image, r.lat, r.long, r.address, 
+            r.description, COUNT(rev.id) as reviews
+    FROM restaurants as r
+    LEFT JOIN cities as c
+    ON r.city_id=c.id
+    LEFT JOIN reviews as rev
+    ON rev.restaurant_id=r.id
+    GROUP BY c.name, r.id
   `
 
 
@@ -21,20 +24,55 @@ exports.list_all_restaurants = async (req, res) => {
 // ========================================>> GET:ID:RESTAURANT
 exports.find_one_restaurant = async (req, res) => {
   const {id} = req.params
-  const querySelection = {
+  const queryRestaurant = {
       text: `
-        SELECT *
-        FROM restaurants
-        JOIN cities
-        ON restaurants.city_id=cities.id
-        WHERE restaurants.id = $1;
+        SELECT r.id, r.name, c.name as city, r.image, r.lat, r.long, r.address, 
+        r.description, COUNT(rev.id) as num_reviews
+        FROM restaurants as r
+        LEFT JOIN cities as c
+        ON r.city_id=c.id
+        LEFT JOIN reviews as rev
+        ON rev.restaurant_id=r.id
+        WHERE r.id = $1
+        GROUP BY c.name, r.id
        `,
       values: [id]}
 
+    const getReviews = {
+        text: `SELECT * FROM reviews WHERE restaurant_id=$1`,
+        values: [id]
+    }
+
+    const getTags = {
+      text: `
+          SELECT tags.id, tags.name
+          FROM tags 
+          JOIN restaurant_to_tag as r2t ON tags.id = r2t.tag_id
+          JOIN restaurants as r ON r2t.restaurant_id = r.id 
+          WHERE r.id=$1
+        `,
+        values: [id]
+    }
+
   try {
-      const { rows } = await db.query(querySelection)
-      res.send(rows)
-  } catch (e) {
+      const { rows: restaurantRows } = await db.query(queryRestaurant)
+      if (!restaurantRows.length) {
+        return res.sendStatus(404)
+      }
+
+      const { rows: reviewRows } = await db.query(getReviews)
+      const { rows: tagRows } = await db.query(getTags)
+
+  
+      if (tagRows) {
+        restaurantRows[0].tags = tagRows
+      }
+      if (reviewRows) {
+        restaurantRows[0].reviews = reviewRows
+      }
+      res.send(restaurantRows[0])
+
+    } catch (e) {
       res.status(404).send("Restaurant not found")
   }
 }

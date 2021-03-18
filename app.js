@@ -12,6 +12,10 @@ const userRouter = require('./routes/userRouter');
 const reviewRouter = require('./routes/reviewRouter');
 
 const app = express();
+
+app.use('/static', express.static(__dirname + '/public'));
+
+app.use(express.static('public'));
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
