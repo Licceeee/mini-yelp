@@ -1,26 +1,26 @@
 const db = require('../db/client')
 
-
-exports.list_all_cities = (req, res) => {
-    // try {
-    //   res.json(pokemons)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
-
+// ========================================>> GET:ALL:CITIES
+exports.list_all_cities = async (req, res) => {
+  const { rows } = await db.query('SELECT * FROM cities')
+  res.send(rows)
   }
 
-exports.find_one_city = (req, res) => {
-    // const { id } = req.params
-    // const pokemon = pokemons.find(poke => poke.id === parseInt(id))
+// ========================================>> GET:ID:CITY
+exports.find_one_city = async (req, res) => {
+  const {id} = req.params
+  const selectUser = {
+      text: `
+          SELECT * FROM cities
+          WHERE id = $1;
+       `,
+      values: [id]}
 
-    // try {
-    //   if (!pokemon) return res.status(404).send('No such pokemon')
-    //   res.json(pokemon)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
-
+  try {
+      const { rows } = await db.query(selectUser)
+      res.send(rows)
+  } catch (e) {
+      res.status(404).send("City not found")
   }
+  }
+

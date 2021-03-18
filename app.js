@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/users', restaurantRouter);
-// app.use('/users', cityRouter);
+app.use('/api/v1/cities', cityRouter);
 // app.use('/users', tagRouter);
 // app.use('/users', usersRouter);
 
