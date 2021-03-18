@@ -33,5 +33,11 @@ module.exports = {
         .withMessage("rating can't be empty")
         .isNumeric()
         .withMessage("Numbers only")
-        .isFloat({min:1,max:5})
+        .isFloat({min:1,max:5}),
+    validateTagName: check('name')
+        .not()
+        .isEmpty()
+        .withMessage("tag can't be empty")
+        .isLength({ min: 1 })
+        .withMessage("Min length 1 chars"),
 }
