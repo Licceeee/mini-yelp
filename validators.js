@@ -40,4 +40,38 @@ module.exports = {
         .withMessage("tag can't be empty")
         .isLength({ min: 1 })
         .withMessage("Min length 1 chars"),
+
+
+
+    validateFirstName: check('first_name')
+        .not()
+        .isEmpty()
+        .withMessage("firstname can't be empty")
+        .isLength({ min: 1 })
+        .withMessage("Min length 1 chars")
+        .isAlpha()
+        .withMessage("Only chars allowed"),
+    validateLastName: check('first_name')
+        .not()
+        .isEmpty()
+        .withMessage("firstname can't be empty")
+        .isLength({ min: 1 })
+        .withMessage("Min length 1 chars")
+        .isAlpha()
+        .withMessage("Only chars allowed"),
+
+    validateEmail: check('first_name')
+        .not()
+        .isEmpty()
+        .withMessage("email can't be empty")
+        .isLength({ min: 5 })
+        .withMessage("Min length 5 chars")
+        .isEmail()
+        .withMessage("Only valid mailformat allowed"),
+    validatePassword: check('password')
+        .not()
+        .isEmpty()
+        .withMessage("pw can't be empty")
+        .isLength({ min: 5 })
+        .withMessage("Min length 5 chars")
 }
