@@ -1,23 +1,25 @@
+const db = require('../db/client')
 
-exports.list_all_users = (req, res) => {
-    // try {
-    //   res.json(pokemons)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
+// ========================================>> GET:ALL:USERS
+exports.list_all_users = async (req, res) => {
+  const { rows } = await db.query('SELECT * FROM users')
+  res.send(rows)
   }
 
-exports.find_one_user = (req, res) => {
-    // const { id } = req.params
-    // const pokemon = pokemons.find(poke => poke.id === parseInt(id))
+// ========================================>> GET:ID:USER
+exports.find_one_user = async (req, res) => {
+  const {id} = req.params
+  const querySelection = {
+      text: `
+          SELECT * FROM users
+          WHERE id = $1;
+       `,
+      values: [id]}
 
-    // try {
-    //   if (!pokemon) return res.status(404).send('No such pokemon')
-    //   res.json(pokemon)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
-
+  try {
+      const { rows } = await db.query(querySelection)
+      res.send(rows)
+  } catch (e) {
+      res.status(404).send("User not found")
   }
+}

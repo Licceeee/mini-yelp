@@ -20,7 +20,7 @@ exports.find_one_tag = async (req, res) => {
       const { rows } = await db.query(querySelection)
       res.send(rows)
   } catch (e) {
-      res.status(404).send("City not found")
+      res.status(404).send("Tag not found")
   }
 }
 
