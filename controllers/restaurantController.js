@@ -1,24 +1,40 @@
+const db = require('../db/client')
 
-exports.list_all_restaurants = (req, res) => {
-    // try {
-    //   res.json(pokemons)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
+// TODO ADD VALIDATION (min max) middleware for rating (1-5)
 
+// ========================================>> GET:ALL:RESTAURANTS
+exports.list_all_restaurants = async (req, res) => {
+
+  // TODO display city_id as city name
+  const selectRestaurants = `
+    SELECT *
+    FROM restaurants
+    JOIN cities
+    ON restaurants.city_id=cities.id
+  `
+
+
+  const { rows } = await db.query(selectRestaurants)
+  res.send(rows)
   }
 
-exports.find_one_restaurant = (req, res) => {
-    // const { id } = req.params
-    // const pokemon = pokemons.find(poke => poke.id === parseInt(id))
+// ========================================>> GET:ID:RESTAURANT
+exports.find_one_restaurant = async (req, res) => {
+  const {id} = req.params
+  const querySelection = {
+      text: `
+        SELECT *
+        FROM restaurants
+        JOIN cities
+        ON restaurants.city_id=cities.id
+        WHERE restaurants.id = $1;
+       `,
+      values: [id]}
 
-    // try {
-    //   if (!pokemon) return res.status(404).send('No such pokemon')
-    //   res.json(pokemon)
-    // } catch (e) {
-    //   res.status(500).send(e.message)
-    // }
-    res.send("joooo")
-
+  try {
+      const { rows } = await db.query(querySelection)
+      res.send(rows)
+  } catch (e) {
+      res.status(404).send("Restaurant not found")
   }
+}
