@@ -1,3 +1,5 @@
+const db = require('../db/client')
+
 
 exports.list_all_cities = (req, res) => {
     // try {
