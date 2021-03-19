@@ -12,5 +12,4 @@ router.get("/m2m", tagController.list_all_m2m);
 router.post("/m2m", [validateRestaurantId, validateTagId], 
                     tagController.post_restaurant_to_tag);
 
-
 module.exports = router;

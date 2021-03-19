@@ -4,7 +4,6 @@ const db = require('../db/client')
 // ========================================>> GET:ALL:RESTAURANTS
 exports.list_all_restaurants = async (req, res) => {
 
-  // TODO display city_id as city name
   const selectRestaurants = `
     SELECT r.id, r.name, c.name as city, r.image, r.lat, r.long, r.address, 
             r.description, COUNT(rev.id) as reviews
