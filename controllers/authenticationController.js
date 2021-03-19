@@ -1,5 +1,5 @@
-// constUser = require('../models/Student');
 const bcrypt = require('bcrypt')
+const db = require('../db/client')
 
 const login = async (req, res, next) => {
     
@@ -8,23 +8,25 @@ const login = async (req, res, next) => {
     const user = {
         text: `
             SELECT * FROM users
-            WHERE email = $1;
+            WHERE email like $1;
          `,
          values: [email]}
 
-    if (!user) return res.status(400).send('Invalid Credentials')
+    
     try {
         const { rows } = await db.query(user)
-        res.send(rows)
+
+        if (!user) return res.status(400).send('Invalid Credentials')
+
+        console.log(rows[0].password)
+
+        const match = await bcrypt.compare(password, rows[0].password)
+        if (!match) return res.status(400).send(`Invalid Credentials`)
+
+        res.send(match)
     } catch (e) {
-        res.status(404).send("User not found")
+        res.status(404).send(`${e} - User not found`)
     }
-    // const match = await bcrypt.compare(password, user.password)
-
-    // if (!match) return res.status(400).send(`Invalid Credentials`)
-
-    // const token = user.createToken()
-    // res.set('x-authorization-token', token).send('User logged in successfully')
 
 }
 

@@ -1,6 +1,6 @@
 const db = require('../db/client')
 const { validationResult } = require('express-validator');
-
+const bcrypt = require('bcrypt')
 
 // ========================================>> GET:ALL:USERS
 exports.list_all_users = async (req, res) => {
@@ -36,13 +36,15 @@ exports.post_user = async (req, res) => {
       }
   const { first_name, last_name, image, email, password } = req.body
 
+  const encryptedPassword = await bcrypt.hash(password, 10)
+
   const create = {
       text: `
-          INSERT INTO tags (first_name, last_name, image, email, password, active)
-          VALUES($1, $2, $3, $4, $5, true)
+          INSERT INTO users (first_name, last_name, image, email, password)
+          VALUES($1, $2, $3, $4, $5)
           RETURNING *;
        `,
-      values: [first_name, last_name, image, email, password]
+      values: [first_name, last_name, image, email, encryptedPassword]
   }
 
   try {

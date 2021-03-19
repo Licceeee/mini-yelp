@@ -60,7 +60,7 @@ module.exports = {
         .isAlpha()
         .withMessage("Only chars allowed"),
 
-    validateEmail: check('first_name')
+    validateEmail: check('email')
         .not()
         .isEmpty()
         .withMessage("email can't be empty")
