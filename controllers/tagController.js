@@ -72,3 +72,36 @@ exports.post_tag = async (req, res) => {
       res.status(500).send(e)
   }
 }
+
+
+// ========================================>> GET:ALL:M2M
+exports.list_all_m2m = async (req, res) => {
+  const { rows } = await db.query('SELECT * FROM restaurant_to_tag')
+  res.send(rows)
+  }
+
+// ========================================>> POST:Many2Many
+exports.post_restaurant_to_tag = async (req, res) => {
+
+  const errors = validationResult(req) 
+      if(!errors.isEmpty()){ 
+          return res.status(422).send({errors}) 
+      }
+  const { restaurant_id, tag_id } = req.body
+
+  const create = {
+      text: `
+          INSERT INTO restaurant_to_tag (restaurant_id, tag_id)
+          VALUES($1, $2)
+          RETURNING *;
+       `,
+      values: [restaurant_id, tag_id]
+  }
+
+  try {
+      const { rows } = await db.query(create)
+      res.send(rows)
+  } catch (e) {
+      res.status(500).send(e)
+  }
+}

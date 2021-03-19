@@ -73,5 +73,15 @@ module.exports = {
         .isEmpty()
         .withMessage("pw can't be empty")
         .isLength({ min: 5 })
-        .withMessage("Min length 5 chars")
+        .withMessage("Min length 5 chars"),
+
+
+    validateTagId: check('tag_id')
+        .not()
+        .isEmpty()
+        .withMessage("tag id can't be empty")
+        .isNumeric()
+        .withMessage("Numbers only")
+        .isLength({ min: 1 })
+        .withMessage("Min length 1 chats"),
 }

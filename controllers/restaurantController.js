@@ -16,7 +16,6 @@ exports.list_all_restaurants = async (req, res) => {
     GROUP BY c.name, r.id
   `
 
-
   const { rows } = await db.query(selectRestaurants)
   res.send(rows)
   }
@@ -27,19 +26,22 @@ exports.find_one_restaurant = async (req, res) => {
   const queryRestaurant = {
       text: `
         SELECT r.id, r.name, c.name as city, r.image, r.lat, r.long, r.address, 
-        r.description, COUNT(rev.id) as num_reviews
+        r.description
         FROM restaurants as r
         LEFT JOIN cities as c
         ON r.city_id=c.id
-        LEFT JOIN reviews as rev
-        ON rev.restaurant_id=r.id
         WHERE r.id = $1
         GROUP BY c.name, r.id
        `,
       values: [id]}
 
     const getReviews = {
-        text: `SELECT * FROM reviews WHERE restaurant_id=$1`,
+        text: `
+          SELECT r.id, r.title, r.title, r.date, r.rating, u.id as user_id, u.first_name, u.last_name
+          FROM reviews as r
+          LEFT JOIN users as u
+          ON r.user_id=u.id  
+          WHERE restaurant_id=$1`,
         values: [id]
     }
 
