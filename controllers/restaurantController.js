@@ -64,7 +64,6 @@ exports.find_one_restaurant = async (req, res) => {
       const { rows: reviewRows } = await db.query(getReviews)
       const { rows: tagRows } = await db.query(getTags)
 
-  
       if (tagRows) {
         restaurantRows[0].tags = tagRows
       }
